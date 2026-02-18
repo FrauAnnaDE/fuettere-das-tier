@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Füttere das Tier!</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    text-align:center;
+    background:linear-gradient(135deg,#ffe8f3,#e8f9ff,#fff6cc);
+  }
+
+  .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 16px;
+    gap:10px;
+  }
+
+  .titleBlock{
+    text-align:left;
+    line-height:1.2;
+  }
+
+  .stars{
+    font-size:20px;
+    font-weight:bold;
+    background:rgba(255,255,255,0.65);
+    padding:8px 14px;
+    border-radius:999px;
+  }
+
+  button{
+    padding:10px 18px;
+    border-radius:25px;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:16px;
+  }
+
+  .btnSmall{
+    background:#ffffff;
+    box-shadow: 0 6px 18px rgba(0,0,0,.10);
+    margin: 4px 6px;
+  }
+
+  #animal{
+    margin:18px auto 10px;
+    width:min(340px, 90vw);
+    height:min(340px, 90vw);
+    border:4px dashed #999;
+    border-radius:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    overflow:hidden;
+  }
+
+  #animal img{
+    max-width:90%;
+    max-height:90%;
+    object-fit:contain;
+  }
+
+  .food-container{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(120px, 170px));
+    gap:14px;
+    justify-content:center;
+    margin:14px auto 0;
+    padding: 0 10px 18px;
+    max-width: 520px;
+  }
+
+  .food{
+    width:100%;
+    aspect-ratio: 1/1;
+    background:white;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    border:3px solid #ddd;
+    box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    user-select:none;
+    transition: 0.18s ease;
+  }
+
+  .food img{
+    max-width:80%;
+    max-height:80%;
+    object-fit:contain;
+  }
+
+  /* подсветка при нажатии */
+  .food.active {
+    border: 4px solid #4CAF50;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+    transform: scale(1.05);
+  }
+
+  .food.wrong {
+    border: 4px solid #ff4d4d;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.7);
+    transform: scale(1.05);
+  }
+
+  .message{
+    font-size:22px;
+    font-weight:bold;
+    min-height:32px;
+    margin:8px 0 6px;
+  }
+
+  /* overlays */
+  .overlay{
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.6);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:white;
+    padding: 18px;
+    z-index: 999;
+  }
+  .hidden{display:none;}
+
+  .cardOverlay{
+    width:min(560px, 92vw);
+    background: rgba(255,255,255,0.96);
+    color:#1f2430;
+    border-radius:24px;
+    padding:18px 16px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.25);
+  }
+
+  .overlayTitle{
+    font-size:28px;
+    font-weight:900;
+    margin: 2px 0 10px;
+  }
+
+  /* BIG bright Start button */
+  .btnStart{
+    padding:16px 28px;
+    font-size:24px;
+    border-radius:999px;
+    background: linear-gradient(135deg, #7bf1ff, #ffd36e, #ff7bd5);
+    color:#1f2430;
+    box-shadow: 0 16px 28px rgba(0,0,0,.20);
+    border: 3px solid rgba(255,255,255,0.7);
+    margin-top: 10px;
+  }
+  .btnStart:active{transform: scale(0.99);}
+
+  .btnBig{
+    padding:12px 22px;
+    font-size:18px;
+    border-radius:999px;
+    background: linear-gradient(135deg, #7bf1ff, #ffd36e);
+    box-shadow: 0 14px 24px rgba(0,0,0,.18);
+  }
+
+  /* end list */
+  .endListTitle{
+    font-weight:900;
+    margin: 12px 0 8px;
+    font-size:16px;
+    color:#3d465c;
+  }
+  .passedList{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    padding: 6px 0 0;
+  }
+  .chip{
+    background:#f4f7ff;
+    border:2px solid rgba(91,124,250,.22);
+    padding:6px 10px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:14px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <img src="loigo.png" alt="Logo"
+         style="height:60px; width:auto; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.12); background:white;"
+         onerror="this.style.display='none'">
+    <div class="titleBlock">
+      <strong>Frau Anna – Deutsch für Kinder</strong><br>
+      Füttere das Tier!
+    </div>
+  </div>
+  <div class="stars" id="stars">⭐ 0/15</div>
+</div>
+
+<div>
+  <button class="btnSmall" onclick="repeatAudio()">🔊 Nochmal hören</button>
+  <button class="btnSmall" onclick="startGame()">🔄 Neu starten</button>
+</div>
+
+<div id="animal"></div>
+
+<div class="food-container" id="foodContainer"></div>
+
+<div class="message" id="message"></div>
+
+<!-- START SCREEN -->
+<div class="overlay" id="startScreen">
+  <div class="cardOverlay">
+    <div class="overlayTitle">Füttere das Tier!</div>
+    <div style="font-weight:800;color:#4b556b;margin-bottom:10px;">
+      Hör gut zu und füttere das Tier mit dem richtigen Essen! 🎧🍎
+    </div>
+    <button class="btnStart" onclick="startGame()">Start</button>
+  </div>
+</div>
+
+<!-- END SCREEN -->
+<div class="overlay hidden" id="endScreen">
+  <div class="cardOverlay">
+    <div class="overlayTitle">🎉 Super!</div>
+    <div style="font-weight:900;color:#4b556b;font-size:18px;" id="endText">Du hast 10 Sterne!</div>
+
+    <div class="endListTitle">Du hast diese Tiere gefüttert:</div>
+    <div class="passedList" id="passedList"></div>
+
+    <div style="margin-top:14px;">
+      <button class="btnBig" onclick="startGame()">Nochmal spielen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =======================
+   DATA
+   ======================= */
+const animals = {
+  kuh:["gras"],
+  pferd:["gras"],
+  ziege:["gras"],
+  schaf:["gras"],
+  esel:["gras","mohrruebe"],
+  schwein:["apfel","kartoffel"],
+  kaninchen:["gras","mohrruebe"],
+  katze:["fisch","milch"],              // как ты хотела
+  maus:["kaese"],
+  affe:["banane"],
+  loewe:["fleisch"],
+  tiger:["fleisch"],
+  gepard:["fleisch"],
+  elefant:["gras"],
+  zebra:["gras"],
+  krokodil:["fisch","fleisch"],
+  schildkroete:["salat","gras"],
+  baer:["honig"],
+  wolf:["fleisch"],
+  robbe:["fisch"],
+  pinguin:["fisch"],
+  flamingo:["fisch"],
+  papagei:["apfel"],
+  kamel:["gras"],
+  rentier:["gras"]
+};
+
+const animalLabels = {
+  kuh: "die Kuh",
+  pferd: "das Pferd",
+  ziege: "die Ziege",
+  schaf: "das Schaf",
+  esel: "der Esel",
+  schwein: "das Schwein",
+  kaninchen: "das Kaninchen",
+  katze: "die Katze",
+  maus: "die Maus",
+  affe: "der Affe",
+  loewe: "der Löwe",
+  tiger: "der Tiger",
+  gepard: "der Gepard",
+  elefant: "der Elefant",
+  zebra: "das Zebra",
+  krokodil: "das Krokodil",
+  schildkroete: "die Schildkröte",
+  baer: "der Bär",
+  wolf: "der Wolf",
+  robbe: "die Robbe",
+  pinguin: "der Pinguin",
+  flamingo: "der Flamingo",
+  papagei: "der Papagei",
+  kamel: "das Kamel",
+  rentier: "das Rentier"
+};
+
+const foods = ["gras","mohrruebe","apfel","kartoffel","fisch","fleisch","milch","kaese","banane","salat","honig"];
+
+/* ==============
+   GAME STATE
+   ============== */
+let currentAnimal = null;
+let neededFoods = [];
+let stars = 0;
+let audio = null;
+
+let animalPool = [];     // без повторов
+let passedAnimals = [];  // список пройденных
+
+/* ==============
+   HELPERS
+   ============== */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ==========================
+   ROUND
+   ========================== */
+function nextRound(){
+  if(stars >= 15){
+    showEnd();
+    return;
+  }
+
+  document.getElementById("message").textContent = "";
+
+  if(animalPool.length === 0){
+    animalPool = shuffle(Object.keys(animals));
+  }
+
+  currentAnimal = animalPool.pop();
+  passedAnimals.push(currentAnimal);
+
+  neededFoods = [...animals[currentAnimal]];
+
+  document.getElementById("animal").innerHTML =
+    `<img src="${currentAnimal}.png" alt="${currentAnimal}">`;
+
+  generateFoodOptions();
+  playAudioAuto();
+}
+
+function generateFoodOptions(){
+  let options = [...neededFoods]; // правильные
+
+  let wrong = foods.filter(f => !neededFoods.includes(f));
+  wrong = shuffle(wrong);
+
+  for(let i=0; options.length < 4 && i < wrong.length; i++){
+    if(!options.includes(wrong[i])) options.push(wrong[i]);
+  }
+
+  options = shuffle(options);
+
+  const container = document.getElementById("foodContainer");
+  container.innerHTML = "";
+
+  options.forEach(food=>{
+    const div = document.createElement("div");
+    div.className = "food";
+    div.dataset.food = food;
+    div.innerHTML = `<img src="${food}.png" alt="${food}">`;
+    div.onclick = () => checkFood(food);
+    container.appendChild(div);
+  });
+}
+
+/* ==========================
+   CHECK ANSWER + HIGHLIGHT
+   ========================== */
+function clearHighlights(){
+  document.querySelectorAll(".food").forEach(el => {
+    el.classList.remove("active","wrong");
+  });
+}
+
+function checkFood(food){
+  const expected = neededFoods[0];
+
+  clearHighlights();
+
+  const clicked = document.querySelector(`.food[data-food="${food}"]`);
+
+  if(food === expected){
+    if(clicked) clicked.classList.add("active");
+
+    neededFoods.shift();
+    document.getElementById("message").textContent = "Super! ⭐";
+
+    setTimeout(() => {
+      if(clicked) clicked.classList.remove("active");
+    }, 450);
+
+    if(neededFoods.length === 0){
+      stars++;
+      document.getElementById("stars").textContent = `⭐ ${stars}/15`;
+      setTimeout(nextRound, 700);
+    } else {
+      // ещё осталась еда для этого животного
+      setTimeout(() => {
+        document.getElementById("message").textContent = "Noch einmal! 🙂";
+      }, 350);
+    }
+  } else {
+    if(clicked) clicked.classList.add("wrong");
+    document.getElementById("message").textContent = "Nein! Probier noch mal!";
+
+    setTimeout(() => {
+      if(clicked) clicked.classList.remove("wrong");
+    }, 550);
+  }
+}
+
+/* ==========================
+   AUDIO
+   ========================== */
+function playAudioAuto(){
+  if(audio){
+    audio.pause();
+    audio.currentTime = 0;
+  }
+  audio = new Audio(currentAnimal + ".mp3");
+  audio.play().catch(()=>{});
+}
+
+function repeatAudio(){
+  if(audio){
+    audio.currentTime = 0;
+    audio.play().catch(()=>{});
+  }
+}
+
+/* ==========================
+   START / END
+   ========================== */
+function startGame(){
+  stars = 0;
+  document.getElementById("stars").textContent = "⭐ 0/15";
+
+  animalPool = [];
+  passedAnimals = [];
+
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("endScreen").classList.add("hidden");
+
+  nextRound();
+}
+
+function showEnd(){
+  document.getElementById("endText").textContent = "Du hast 15 Sterne!";
+
+  const unique = [];
+  for(const id of passedAnimals){
+    if(!unique.includes(id)) unique.push(id);
+  }
+
+  const list = document.getElementById("passedList");
+  list.innerHTML = "";
+  unique.forEach(id => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.textContent = animalLabels[id] || id;
+    list.appendChild(chip);
+  });
+
+  document.getElementById("endScreen").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
