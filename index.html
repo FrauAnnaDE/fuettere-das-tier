@@ -394,7 +394,41 @@ function clearHighlights(){
 }
 
 function checkFood(food){
-  const expected = neededFoods[0];
+  clearHighlights();
+
+  const clicked = document.querySelector(`.food[data-food="${food}"]`);
+
+  // ✅ правильный, если еда входит в список оставшихся нужных
+  if (neededFoods.includes(food)) {
+    if (clicked) clicked.classList.add("active");
+
+    // удаляем выбранную еду из нужных
+    neededFoods = neededFoods.filter(f => f !== food);
+
+    document.getElementById("message").textContent = "Super! ⭐";
+
+    setTimeout(() => {
+      if (clicked) clicked.classList.remove("active");
+    }, 450);
+
+    if (neededFoods.length === 0) {
+      stars++;
+      document.getElementById("stars").textContent = `⭐ ${stars}/15`; // оставь /15, раз ты уже так сделала
+      setTimeout(nextRound, 700);
+    } else {
+      document.getElementById("message").textContent = "Noch einmal! 🙂";
+    }
+
+  } else {
+    if (clicked) clicked.classList.add("wrong");
+    document.getElementById("message").textContent = "Nein! Probier noch mal!";
+
+    setTimeout(() => {
+      if (clicked) clicked.classList.remove("wrong");
+    }, 550);
+  }
+}
+
 
   clearHighlights();
 
@@ -488,3 +522,4 @@ function showEnd(){
 
 </body>
 </html>
+
