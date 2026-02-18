@@ -99,7 +99,6 @@
     object-fit:contain;
   }
 
-  /* подсветка при нажатии */
   .food.active {
     border: 4px solid #4CAF50;
     box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
@@ -119,7 +118,6 @@
     margin:8px 0 6px;
   }
 
-  /* overlays */
   .overlay{
     position:fixed;
     top:0; left:0; right:0; bottom:0;
@@ -129,61 +127,54 @@
     align-items:center;
     flex-direction:column;
     color:white;
-    padding: 18px;
-    z-index: 999;
+    padding:18px;
+    z-index:999;
   }
+
   .hidden{display:none;}
 
   .cardOverlay{
-    width:min(560px, 92vw);
-    background: rgba(255,255,255,0.96);
+    width:min(560px,92vw);
+    background:rgba(255,255,255,0.96);
     color:#1f2430;
     border-radius:24px;
     padding:18px 16px;
-    box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    box-shadow:0 18px 40px rgba(0,0,0,.25);
   }
 
   .overlayTitle{
     font-size:28px;
     font-weight:900;
-    margin: 2px 0 10px;
+    margin:2px 0 10px;
   }
 
-  /* BIG bright Start button */
   .btnStart{
     padding:16px 28px;
     font-size:24px;
     border-radius:999px;
-    background: linear-gradient(135deg, #7bf1ff, #ffd36e, #ff7bd5);
+    background:linear-gradient(135deg,#7bf1ff,#ffd36e,#ff7bd5);
     color:#1f2430;
-    box-shadow: 0 16px 28px rgba(0,0,0,.20);
-    border: 3px solid rgba(255,255,255,0.7);
-    margin-top: 10px;
+    box-shadow:0 16px 28px rgba(0,0,0,.20);
+    border:3px solid rgba(255,255,255,0.7);
+    margin-top:10px;
   }
-  .btnStart:active{transform: scale(0.99);}
 
   .btnBig{
     padding:12px 22px;
     font-size:18px;
     border-radius:999px;
-    background: linear-gradient(135deg, #7bf1ff, #ffd36e);
-    box-shadow: 0 14px 24px rgba(0,0,0,.18);
+    background:linear-gradient(135deg,#7bf1ff,#ffd36e);
+    box-shadow:0 14px 24px rgba(0,0,0,.18);
   }
 
-  /* end list */
-  .endListTitle{
-    font-weight:900;
-    margin: 12px 0 8px;
-    font-size:16px;
-    color:#3d465c;
-  }
   .passedList{
     display:flex;
     flex-wrap:wrap;
     gap:8px;
     justify-content:center;
-    padding: 6px 0 0;
+    margin-top:8px;
   }
+
   .chip{
     background:#f4f7ff;
     border:2px solid rgba(91,124,250,.22);
@@ -216,42 +207,27 @@
 </div>
 
 <div id="animal"></div>
-
 <div class="food-container" id="foodContainer"></div>
-
 <div class="message" id="message"></div>
 
-<!-- START SCREEN -->
 <div class="overlay" id="startScreen">
   <div class="cardOverlay">
     <div class="overlayTitle">Füttere das Tier!</div>
-    <div style="font-weight:800;color:#4b556b;margin-bottom:10px;">
-      Hör gut zu und füttere das Tier mit dem richtigen Essen! 🎧🍎
-    </div>
     <button class="btnStart" onclick="startGame()">Start</button>
   </div>
 </div>
 
-<!-- END SCREEN -->
 <div class="overlay hidden" id="endScreen">
   <div class="cardOverlay">
     <div class="overlayTitle">🎉 Super!</div>
-    <div style="font-weight:900;color:#4b556b;font-size:18px;" id="endText">Du hast 10 Sterne!</div>
-
-    <div class="endListTitle">Du hast diese Tiere gefüttert:</div>
+    <div id="endText">Du hast 15 Sterne!</div>
     <div class="passedList" id="passedList"></div>
-
-    <div style="margin-top:14px;">
-      <button class="btnBig" onclick="startGame()">Nochmal spielen</button>
-    </div>
+    <button class="btnBig" onclick="startGame()">Nochmal spielen</button>
   </div>
 </div>
 
 <script>
-/* =======================
-   DATA
-   ======================= */
-const animals = {
+const animals={
   kuh:["gras"],
   pferd:["gras"],
   ziege:["gras"],
@@ -259,7 +235,7 @@ const animals = {
   esel:["gras","mohrruebe"],
   schwein:["apfel","kartoffel"],
   kaninchen:["gras","mohrruebe"],
-  katze:["fisch","milch"],              // как ты хотела
+  katze:["fisch","milch"],
   maus:["kaese"],
   affe:["banane"],
   loewe:["fleisch"],
@@ -279,247 +255,101 @@ const animals = {
   rentier:["gras"]
 };
 
-const animalLabels = {
-  kuh: "die Kuh",
-  pferd: "das Pferd",
-  ziege: "die Ziege",
-  schaf: "das Schaf",
-  esel: "der Esel",
-  schwein: "das Schwein",
-  kaninchen: "das Kaninchen",
-  katze: "die Katze",
-  maus: "die Maus",
-  affe: "der Affe",
-  loewe: "der Löwe",
-  tiger: "der Tiger",
-  gepard: "der Gepard",
-  elefant: "der Elefant",
-  zebra: "das Zebra",
-  krokodil: "das Krokodil",
-  schildkroete: "die Schildkröte",
-  baer: "der Bär",
-  wolf: "der Wolf",
-  robbe: "die Robbe",
-  pinguin: "der Pinguin",
-  flamingo: "der Flamingo",
-  papagei: "der Papagei",
-  kamel: "das Kamel",
-  rentier: "das Rentier"
-};
+const foods=["gras","mohrruebe","apfel","kartoffel","fisch","fleisch","milch","kaese","banane","salat","honig"];
 
-const foods = ["gras","mohrruebe","apfel","kartoffel","fisch","fleisch","milch","kaese","banane","salat","honig"];
+let currentAnimal=null;
+let neededFoods=[];
+let stars=0;
+let audio=null;
+let animalPool=[];
+let passedAnimals=[];
 
-/* ==============
-   GAME STATE
-   ============== */
-let currentAnimal = null;
-let neededFoods = [];
-let stars = 0;
-let audio = null;
-
-let animalPool = [];     // без повторов
-let passedAnimals = [];  // список пройденных
-
-/* ==============
-   HELPERS
-   ============== */
 function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
+  return arr.sort(()=>Math.random()-0.5);
 }
 
-/* ==========================
-   ROUND
-   ========================== */
 function nextRound(){
-  if(stars >= 15){
-    showEnd();
-    return;
-  }
-
-  document.getElementById("message").textContent = "";
-
-  if(animalPool.length === 0){
-    animalPool = shuffle(Object.keys(animals));
-  }
-
-  currentAnimal = animalPool.pop();
+  if(stars>=15){showEnd();return;}
+  if(animalPool.length===0) animalPool=shuffle(Object.keys(animals));
+  currentAnimal=animalPool.pop();
   passedAnimals.push(currentAnimal);
-
-  neededFoods = [...animals[currentAnimal]];
-
-  document.getElementById("animal").innerHTML =
-    `<img src="${currentAnimal}.png" alt="${currentAnimal}">`;
-
+  neededFoods=[...animals[currentAnimal]];
+  document.getElementById("animal").innerHTML=`<img src="${currentAnimal}.png">`;
   generateFoodOptions();
   playAudioAuto();
 }
 
 function generateFoodOptions(){
-  let options = [...neededFoods]; // правильные
-
-  let wrong = foods.filter(f => !neededFoods.includes(f));
-  wrong = shuffle(wrong);
-
-  for(let i=0; options.length < 4 && i < wrong.length; i++){
-    if(!options.includes(wrong[i])) options.push(wrong[i]);
-  }
-
-  options = shuffle(options);
-
-  const container = document.getElementById("foodContainer");
-  container.innerHTML = "";
-
+  let options=[...neededFoods];
+  let wrong=shuffle(foods.filter(f=>!neededFoods.includes(f)));
+  while(options.length<4) options.push(wrong.pop());
+  options=shuffle(options);
+  const container=document.getElementById("foodContainer");
+  container.innerHTML="";
   options.forEach(food=>{
-    const div = document.createElement("div");
-    div.className = "food";
-    div.dataset.food = food;
-    div.innerHTML = `<img src="${food}.png" alt="${food}">`;
-    div.onclick = () => checkFood(food);
+    const div=document.createElement("div");
+    div.className="food";
+    div.dataset.food=food;
+    div.innerHTML=`<img src="${food}.png">`;
+    div.onclick=()=>checkFood(food);
     container.appendChild(div);
   });
 }
 
-/* ==========================
-   CHECK ANSWER + HIGHLIGHT
-   ========================== */
 function clearHighlights(){
-  document.querySelectorAll(".food").forEach(el => {
+  document.querySelectorAll(".food").forEach(el=>{
     el.classList.remove("active","wrong");
   });
 }
 
 function checkFood(food){
   clearHighlights();
-
-  const clicked = document.querySelector(`.food[data-food="${food}"]`);
-
-  // ✅ правильный, если еда входит в список оставшихся нужных
-  if (neededFoods.includes(food)) {
-    if (clicked) clicked.classList.add("active");
-
-    // удаляем выбранную еду из нужных
-    neededFoods = neededFoods.filter(f => f !== food);
-
-    document.getElementById("message").textContent = "Super! ⭐";
-
-    setTimeout(() => {
-      if (clicked) clicked.classList.remove("active");
-    }, 450);
-
-    if (neededFoods.length === 0) {
+  const clicked=document.querySelector(`.food[data-food="${food}"]`);
+  if(neededFoods.includes(food)){
+    clicked.classList.add("active");
+    neededFoods=neededFoods.filter(f=>f!==food);
+    if(neededFoods.length===0){
       stars++;
-      document.getElementById("stars").textContent = `⭐ ${stars}/15`; // оставь /15, раз ты уже так сделала
-      setTimeout(nextRound, 700);
-    } else {
-      document.getElementById("message").textContent = "Noch einmal! 🙂";
+      document.getElementById("stars").textContent=`⭐ ${stars}/15`;
+      setTimeout(nextRound,700);
     }
-
-  } else {
-    if (clicked) clicked.classList.add("wrong");
-    document.getElementById("message").textContent = "Nein! Probier noch mal!";
-
-    setTimeout(() => {
-      if (clicked) clicked.classList.remove("wrong");
-    }, 550);
+  }else{
+    clicked.classList.add("wrong");
   }
 }
 
-
-  clearHighlights();
-
-  const clicked = document.querySelector(`.food[data-food="${food}"]`);
-
-  if(food === expected){
-    if(clicked) clicked.classList.add("active");
-
-    neededFoods.shift();
-    document.getElementById("message").textContent = "Super! ⭐";
-
-    setTimeout(() => {
-      if(clicked) clicked.classList.remove("active");
-    }, 450);
-
-    if(neededFoods.length === 0){
-      stars++;
-      document.getElementById("stars").textContent = `⭐ ${stars}/15`;
-      setTimeout(nextRound, 700);
-    } else {
-      // ещё осталась еда для этого животного
-      setTimeout(() => {
-        document.getElementById("message").textContent = "Noch einmal! 🙂";
-      }, 350);
-    }
-  } else {
-    if(clicked) clicked.classList.add("wrong");
-    document.getElementById("message").textContent = "Nein! Probier noch mal!";
-
-    setTimeout(() => {
-      if(clicked) clicked.classList.remove("wrong");
-    }, 550);
-  }
-}
-
-/* ==========================
-   AUDIO
-   ========================== */
 function playAudioAuto(){
-  if(audio){
-    audio.pause();
-    audio.currentTime = 0;
-  }
-  audio = new Audio(currentAnimal + ".mp3");
+  if(audio){audio.pause();audio.currentTime=0;}
+  audio=new Audio(currentAnimal+".mp3");
   audio.play().catch(()=>{});
 }
 
 function repeatAudio(){
-  if(audio){
-    audio.currentTime = 0;
-    audio.play().catch(()=>{});
-  }
+  if(audio){audio.currentTime=0;audio.play().catch(()=>{});}
 }
 
-/* ==========================
-   START / END
-   ========================== */
 function startGame(){
-  stars = 0;
-  document.getElementById("stars").textContent = "⭐ 0/15";
-
-  animalPool = [];
-  passedAnimals = [];
-
+  stars=0;
+  document.getElementById("stars").textContent="⭐ 0/15";
+  animalPool=[];
+  passedAnimals=[];
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("endScreen").classList.add("hidden");
-
   nextRound();
 }
 
 function showEnd(){
-  document.getElementById("endText").textContent = "Du hast 15 Sterne!";
-
-  const unique = [];
-  for(const id of passedAnimals){
-    if(!unique.includes(id)) unique.push(id);
-  }
-
-  const list = document.getElementById("passedList");
-  list.innerHTML = "";
-  unique.forEach(id => {
-    const chip = document.createElement("div");
-    chip.className = "chip";
-    chip.textContent = animalLabels[id] || id;
+  const list=document.getElementById("passedList");
+  list.innerHTML="";
+  passedAnimals.forEach(a=>{
+    const chip=document.createElement("div");
+    chip.className="chip";
+    chip.textContent=a;
     list.appendChild(chip);
   });
-
   document.getElementById("endScreen").classList.remove("hidden");
 }
 </script>
 
 </body>
 </html>
-
